@@ -36,24 +36,37 @@ namespace Interface4_Automatiseret_Test
 
             // SCENARIE 1: Alt-i-én (MobilePay)
             var services1 = new ServiceCollection();
-            services1.AddScoped<IPaymentProcessor, MobilePayProcessor>();
-            services1.AddScoped<INotifier, MobilePayProcessor>();
+            services1.AddScoped<IPaymentProcessor, CreditCardProcessor>();
+            //services1.AddScoped<INotifier, MobilePayProcessor>();
             services1.AddScoped<CheckoutManager>();
             var provider1 = services1.BuildServiceProvider();
 
-            // SCENARIE 2: Kun betaling (SimpleCardReader)
+            // SCENARIE 2: Alt-i-én (MobilePay)
             var services2 = new ServiceCollection();
-            services2.AddScoped<IPaymentProcessor, CreditCardProcessor>();
-            services2.AddScoped<INotifier, EMailService>();
+            services2.AddScoped<IPaymentProcessor, MobilePayProcessor>();
+            services2.AddScoped<INotifier, MobilePayProcessor>();
             services2.AddScoped<CheckoutManager>();
             var provider2 = services2.BuildServiceProvider();
 
-            // AFVIKLING
-            Console.WriteLine("--- Scenarie 1: MobilePay ---");
-            provider1.GetRequiredService<CheckoutManager>().CompleteOrder(100);
+            // SCENARIE 3: CreditCardProcessor og EMAilService
+            var services3 = new ServiceCollection();
+            services3.AddScoped<IPaymentProcessor, CreditCardProcessor>();
+            services3.AddScoped<INotifier, EMailService>();
+            services3.AddScoped<CheckoutManager>();
+            var provider3 = services3.BuildServiceProvider();
 
-            Console.WriteLine("\n--- Scenarie 2: CreditCardProcessor og EMAilService ---");
+            // AFVIKLING
+            Console.WriteLine("\n--- Scenarie 1: CreditCardProcessor ---");
+            provider1.GetRequiredService<CheckoutManager>().CompleteOrder(100);
+            Console.WriteLine("");
+
+            Console.WriteLine("\n--- Scenarie 2: MobilePay ---");
             provider2.GetRequiredService<CheckoutManager>().CompleteOrder(100);
+            Console.WriteLine("");
+
+            Console.WriteLine("\n--- Scenarie 3: CreditCardProcessor og EMAilService ---");
+            provider3.GetRequiredService<CheckoutManager>().CompleteOrder(100);
+            Console.WriteLine("");
 
             Console.ReadKey();
         }
